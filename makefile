@@ -1,6 +1,6 @@
 CXX ?= g++
 AR ?= ar
-CXXFLAGS ?= -O3 -std=c++11
+CXXFLAGS ?= -O3 -std=c++17
 CPPFLAGS += -Iinclude
 
 LIB_NAMES := $(notdir $(patsubst %/,%,$(wildcard src/*/)))
