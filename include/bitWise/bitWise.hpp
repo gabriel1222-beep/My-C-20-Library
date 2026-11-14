@@ -1,6 +1,8 @@
 #pragma once
 
+#include <climits>
 #include <concepts>
+#include <cstdint>
 #include <limits>
 #include <cstddef>
 
@@ -15,6 +17,13 @@ consteval T bit_mask() {
 
     return static_cast<T>(T{1} << Bit);
 }
+template <std::unsigned_integral T>
+constexpr T bit_mask(std::size_t Bit) {
+    static_assert(!std::same_as<T, bool>,
+                  "T must be an unsigned integer type, not bool");
+
+    return static_cast<T>(T{1} << Bit);
+}
 
 template <std::size_t Bit, std::unsigned_integral T>
 constexpr bool read_bit(const T byte) {
@@ -25,10 +34,18 @@ template <std::size_t Bit, std::unsigned_integral T>
 constexpr T turn_on(const T byte) {
     return static_cast<T>(byte | bit_mask<Bit, T>());
 }
+template <std::unsigned_integral T>
+constexpr T turn_on(const T byte,std::size_t Bit) {
+    return static_cast<T>(byte | bit_mask<T>(Bit));
+}
 
 template <std::size_t Bit, std::unsigned_integral T>
 constexpr T turn_off(const T byte) {
     return static_cast<T>(byte & static_cast<T>(~bit_mask<Bit, T>()));
+}
+template <std::unsigned_integral T>
+constexpr T turn_off(const T byte,std::size_t Bit) {
+    return static_cast<T>(byte & static_cast<T>(~bit_mask<T>(Bit)));
 }
 
 template <std::size_t Bit, std::unsigned_integral T>
@@ -39,6 +56,10 @@ constexpr T flip_bit(const T byte) {
 template <std::size_t Bit, std::unsigned_integral T>
 constexpr T set_bit(const T byte, bool value) {
     return value ? turn_on<Bit>(byte) : turn_off<Bit>(byte);
+}
+template <std::unsigned_integral T>
+constexpr T set_bit(const T byte,size_t Bit, bool value) {
+    return value ? turn_on(byte,Bit) : turn_off(byte,Bit);
 }
 
 template <std::size_t Pos, std::size_t Width, std::unsigned_integral T>
